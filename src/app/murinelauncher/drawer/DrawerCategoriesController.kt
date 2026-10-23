@@ -142,7 +142,12 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
         val icon = category?.let {
             AppCompatResources.getDrawable(materialContext, CategoryIcons.drawable(it.iconId))?.mutate()
         }?.apply {
-            setBounds(0, 0, dp(32), dp(32))
+            // TextView centers compound drawables on the whole line box, descender space included;
+            // shift the icon so it centers on the capital letters instead.
+            val metrics = heading.paint.fontMetricsInt
+            val caps = Rect().also { heading.paint.getTextBounds("H", 0, 1, it) }.height()
+            val shift = -(metrics.top + metrics.bottom) / 2 - caps / 2
+            setBounds(0, shift, dp(28), dp(28) + shift)
             setTint(heading.currentTextColor)
         }
         heading.setCompoundDrawablesRelative(icon, null, null, null)
