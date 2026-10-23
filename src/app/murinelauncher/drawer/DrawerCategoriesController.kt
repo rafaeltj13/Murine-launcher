@@ -15,6 +15,7 @@ import android.view.ViewConfiguration
 import android.view.Gravity
 import android.view.View
 import android.widget.RelativeLayout
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherPrefs
@@ -37,11 +38,12 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     private val materialContext = DrawerCategoryTheme.wrap(context)
     val heading = MaterialTextView(materialContext).apply {
         id = R.id.drawer_category_heading
-        setTextAppearance(MaterialR.style.TextAppearance_Material3_TitleLarge)
+        setTextAppearance(MaterialR.style.TextAppearance_Material3_HeadlineMedium)
         setTypeface(typeface, Typeface.BOLD)
         setTextColor(context.getColor(R.color.all_apps_label_text_color))
         gravity = Gravity.CENTER_VERTICAL or Gravity.START
-        minHeight = dp(56)
+        minHeight = dp(64)
+        compoundDrawablePadding = dp(12)
         setPadding(0, dp(12), 0, dp(12))
         ViewCompat.setAccessibilityHeading(this, true)
     }
@@ -127,11 +129,23 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
             scrollStates.clear()
         }
         updateOrder()
-        heading.text = visible.firstOrNull { it.id == selected }?.let(repository::title).orEmpty()
+        updateHeading(visible.firstOrNull { it.id == selected })
         tabs.update(visible, selected)
         host.applyCategoryFilter()
         if (selected != previousSelection) host.activeRecyclerView?.scrollToTop()
         host.updateDrawerControlsLayout()
+    }
+
+    /** The selected category's name, led by its tab icon in the heading's text color. */
+    private fun updateHeading(category: CategoryState.Category?) {
+        heading.text = category?.let(repository::title).orEmpty()
+        val icon = category?.let {
+            AppCompatResources.getDrawable(materialContext, CategoryIcons.drawable(it.iconId))?.mutate()
+        }?.apply {
+            setBounds(0, 0, dp(32), dp(32))
+            setTint(heading.currentTextColor)
+        }
+        heading.setCompoundDrawablesRelative(icon, null, null, null)
     }
 
     /** Keeps an app drag in the drawer when there are categories to drop it on. */
