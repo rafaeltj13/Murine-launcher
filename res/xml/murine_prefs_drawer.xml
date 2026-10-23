@@ -74,7 +74,7 @@
             android:defaultValue="false" />
         <Preference
             android:key="pref_drawer_manage_categories"
-            android:title="@string/drawer_manage_categories"
+            android:title="@string/drawer_category_choose"
             android:dependency="pref_drawer_categories" />
         <SwitchPreferenceCompat
             android:key="pref_drawer_bottom_search"

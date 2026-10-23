@@ -70,6 +70,8 @@ object CategoryPicker {
                 setChipIconResource(CategoryIcons.drawable(id))
                 chipIconTint = textColors
                 isChipIconVisible = true
+                // Checked chips are already tinted; a checkmark would cover the category icon.
+                isCheckedIconVisible = false
                 isChecked = id in picked
                 group.addView(this)
             }

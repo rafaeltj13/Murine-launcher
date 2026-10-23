@@ -183,7 +183,6 @@
     <string name="pref_drawer_categories_summary" tools:ignore="MissingTranslation">Group apps automatically, with manual corrections and bottom tabs</string>
     <string name="pref_drawer_bottom_search_title" tools:ignore="MissingTranslation">Bottom drawer search</string>
     <string name="pref_drawer_bottom_search_summary" tools:ignore="MissingTranslation">Keep app search within reach, above the keyboard while typing</string>
-    <string name="drawer_manage_categories" tools:ignore="MissingTranslation">Manage categories</string>
     <string name="drawer_category_choose" tools:ignore="MissingTranslation">Choose categories</string>
     <string name="drawer_category_choose_message" tools:ignore="MissingTranslation">Pick %1$d. Apps that fit none of them go to Other.</string>
     <string name="drawer_category_choose_count" tools:ignore="MissingTranslation">%1$d of %2$d selected</string>

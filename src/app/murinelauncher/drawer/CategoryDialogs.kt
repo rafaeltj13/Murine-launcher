@@ -24,23 +24,8 @@ import com.android.launcher3.model.data.AppInfo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.content.res.AppCompatResources
 
-/** Editing UI shared by drawer tabs, app shortcuts, and launcher settings. */
+/** Editing UI for drawer category tabs and app shortcuts. */
 object CategoryDialogs {
-    @JvmStatic
-    fun manage(context: Context, repository: CategoryRepository) {
-        val categories = repository.state().shown
-        MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
-            .setTitle(R.string.drawer_manage_categories)
-            .setItems(categories.map(repository::title).toTypedArray()) { _, index ->
-                edit(context, repository, categories[index].id)
-            }
-            .setPositiveButton(R.string.drawer_category_choose) { _, _ ->
-                CategoryPicker.show(context, repository)
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
-    }
-
     @JvmStatic
     fun assign(context: Context, repository: CategoryRepository, app: AppInfo) {
         val categories = repository.state().shown
@@ -65,7 +50,7 @@ object CategoryDialogs {
         val bounds = Rect()
         launcher.dragLayer.getDescendantRectRelativeToSelf(anchor, bounds)
         val rtl = anchor.layoutDirection == View.LAYOUT_DIRECTION_RTL
-        val items = actions(repository, id, inPopup = true).map { action ->
+        val items = actions(repository, id).map { action ->
             val icon = when (action) {
                 R.string.drawer_category_rename -> R.drawable.gm_edit_24
                 R.string.drawer_category_icon -> CategoryIcons.drawable(category.iconId)
@@ -86,7 +71,7 @@ object CategoryDialogs {
             ?.contentDescription = repository.title(category)
     }
 
-    private fun actions(repository: CategoryRepository, id: String, inPopup: Boolean): List<Int> {
+    private fun actions(repository: CategoryRepository, id: String): List<Int> {
         val actions = mutableListOf(R.string.drawer_category_rename, R.string.drawer_category_icon)
         // Other is always the last tab.
         if (id != CategoryState.OTHER) {
@@ -94,21 +79,8 @@ object CategoryDialogs {
             actions.add(R.string.drawer_category_move_right)
         }
         if (repository.state().hasOrder(id)) actions.add(R.string.drawer_category_sort_alphabetically)
-        // Settings reach the picker from the Manage categories dialog itself.
-        if (inPopup) actions.add(R.string.drawer_category_choose)
+        actions.add(R.string.drawer_category_choose)
         return actions
-    }
-
-    private fun edit(context: Context, repository: CategoryRepository, id: String) {
-        val category = repository.state().categories.firstOrNull { it.id == id } ?: return
-        val actions = actions(repository, id, inPopup = false)
-        MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
-            .setTitle(repository.title(category))
-            .setItems(actions.map(context::getString).toTypedArray()) { _, index ->
-                performAction(context, repository, id, actions[index])
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
     }
 
     private fun performAction(context: Context, repository: CategoryRepository, id: String, action: Int) {

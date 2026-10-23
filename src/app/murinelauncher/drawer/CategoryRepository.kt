@@ -10,11 +10,11 @@ import android.content.Context
 import android.content.pm.LauncherApps
 import android.os.Process
 import android.os.UserHandle
+import android.os.UserManager
 import android.util.Log
 import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.model.data.AppInfo
-import com.android.launcher3.pm.UserCache
 import java.util.UUID
 
 /** Uses the launcher's existing, backed-up preference file; no network or package lookups. */
@@ -62,7 +62,8 @@ class CategoryRepository(private val context: Context) {
     fun installedApps(): List<PickerApp> {
         val launcherApps = context.getSystemService(LauncherApps::class.java)
         val hidden = HiddenAppsRepository.getHiddenComponents(context)
-        return UserCache.INSTANCE.get(context).userProfiles.flatMap { user ->
+        // Not UserCache: it fills in asynchronously and may still be empty in settings.
+        return launcherApps.profiles.flatMap { user ->
             launcherApps.getActivityList(null, user)
                 .filter { it.componentName.flattenToString() !in hidden }
                 .map { PickerApp(key(user, it.componentName.packageName),
@@ -76,7 +77,8 @@ class CategoryRepository(private val context: Context) {
         val profile = if (user == Process.myUserHandle()) "personal" else {
             // Profile serials alone may identify a different profile after cross-device restore.
             // Keep those corrections device-bound; personal-app corrections remain portable.
-            "profile:$profileScope:${UserCache.INSTANCE.get(context).getSerialNumberForUser(user)}"
+            val serial = context.getSystemService(UserManager::class.java).getSerialNumberForUser(user)
+            "profile:$profileScope:$serial"
         }
         return "$profile/$packageName"
     }

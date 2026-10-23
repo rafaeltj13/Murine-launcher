@@ -2,7 +2,6 @@
 package app.murinelauncher.settings
 
 import android.util.Log
-import app.murinelauncher.drawer.CategoryDialogs
 import app.murinelauncher.drawer.CategoryPicker
 import app.murinelauncher.drawer.CategoryRepository
 import androidx.preference.Preference
@@ -62,7 +61,7 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
             }
             "pref_drawer_manage_categories" -> {
                 preference.setOnPreferenceClickListener {
-                    CategoryDialogs.manage(requireContext(), CategoryRepository(requireContext()))
+                    CategoryPicker.show(requireContext(), CategoryRepository(requireContext()))
                     true
                 }
                 return true

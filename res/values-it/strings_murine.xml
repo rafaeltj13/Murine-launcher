@@ -183,7 +183,6 @@
     <string name="pref_drawer_categories_summary" tools:ignore="MissingTranslation">Raggruppa le app automaticamente, con correzioni manuali e schede in basso</string>
     <string name="pref_drawer_bottom_search_title" tools:ignore="MissingTranslation">Ricerca del cassetto in basso</string>
     <string name="pref_drawer_bottom_search_summary" tools:ignore="MissingTranslation">Mantieni la ricerca a portata di mano, sopra la tastiera durante la digitazione</string>
-    <string name="drawer_manage_categories" tools:ignore="MissingTranslation">Gestisci categorie</string>
     <string name="drawer_category_choose" tools:ignore="MissingTranslation">Scegli le categorie</string>
     <string name="drawer_category_choose_message" tools:ignore="MissingTranslation">Scegline %1$d. Le app che non rientrano in nessuna finiscono in Altro.</string>
     <string name="drawer_category_choose_count" tools:ignore="MissingTranslation">%1$d di %2$d selezionate</string>
