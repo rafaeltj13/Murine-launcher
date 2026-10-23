@@ -9,8 +9,13 @@ package app.murinelauncher.drawer
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.ColorStateList
+import android.graphics.Typeface
+import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import androidx.core.view.ViewCompat
 import app.murinelauncher.drawer.CategoryRepository.PickerApp
 import com.android.launcher3.R
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
@@ -18,6 +23,7 @@ import com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 import com.google.android.material.R as MaterialR
@@ -52,6 +58,23 @@ object CategoryPicker {
         val picked = LinkedHashSet(if (state.confirmed) state.selected else CategoryState.suggest(
             apps.map { state.primaryFor(it.key, it.packageName, it.androidCategory) }, state.selected))
         val padding = (24 * context.resources.displayMetrics.density).toInt()
+        val title = LinearLayout(themed).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(padding, padding, padding, 0)
+            val primary = MaterialColors.getColor(this, android.R.attr.colorPrimary)
+            addView(ImageView(themed).apply {
+                setImageResource(R.drawable.ic_category_manage)
+                imageTintList = ColorStateList.valueOf(primary)
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }, LinearLayout.LayoutParams(padding * 4 / 3, padding * 4 / 3))
+            addView(MaterialTextView(themed).apply {
+                setTextAppearance(MaterialR.style.TextAppearance_Material3_HeadlineMedium)
+                setTypeface(typeface, Typeface.BOLD)
+                setText(R.string.drawer_category_choose)
+                setPadding(0, padding / 2, 0, 0)
+                ViewCompat.setAccessibilityHeading(this, true)
+            })
+        }
         val message = MaterialTextView(themed).apply {
             setTextAppearance(MaterialR.style.TextAppearance_Material3_BodyMedium)
             text = context.getString(R.string.drawer_category_choose_message, CategoryState.PICK_COUNT)
@@ -85,7 +108,7 @@ object CategoryPicker {
         }
         var saved = false
         val dialog = MaterialAlertDialogBuilder(themed)
-            .setTitle(R.string.drawer_category_choose)
+            .setCustomTitle(title)
             .setView(ScrollView(themed).apply { addView(content) })
             .setPositiveButton(R.string.drawer_category_save) { _, _ ->
                 saved = true
