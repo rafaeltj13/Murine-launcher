@@ -1670,8 +1670,31 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             // Anchor to the row's measured content origin, including either search placement.
             offset = Math.max(0, bounds.top + recycler.getPaddingTop()
                     - heading.getHeight() - dpToPx(8) - heading.getTop());
+            alignCategoryHeadingToIcons(heading, recycler);
         }
         heading.setTranslationY(offset);
+    }
+
+    /**
+     * Indents the heading so its icon lines up with the first column's app icons, which sit
+     * centered in cells wider than they are. Keeps the last indent while no icons are laid out.
+     */
+    private void alignCategoryHeadingToIcons(View heading, AllAppsRecyclerView recycler) {
+        boolean rtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
+        Rect icon = new Rect();
+        int edge = rtl ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        for (int i = 0; i < recycler.getChildCount(); i++) {
+            if (!(recycler.getChildAt(i) instanceof BubbleTextView bubble)) continue;
+            bubble.getIconBounds(icon);
+            offsetDescendantRectToMyCoords(bubble, icon);
+            edge = rtl ? Math.max(edge, icon.right) : Math.min(edge, icon.left);
+        }
+        if (edge == Integer.MIN_VALUE || edge == Integer.MAX_VALUE) return;
+        int indent = Math.max(0, rtl ? heading.getRight() - edge : edge - heading.getLeft());
+        if (heading.getPaddingStart() != indent) {
+            heading.setPaddingRelative(indent, heading.getPaddingTop(),
+                    heading.getPaddingEnd(), heading.getPaddingBottom());
+        }
     }
 
     private int getDrawerContentTopPadding() {
